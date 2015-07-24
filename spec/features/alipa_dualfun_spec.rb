@@ -3,9 +3,9 @@ require 'spec_helper'
 #http://sandbox.alipaydev.com/index.htm
 #sandbox_areq22@aliyun.com
 #http://openapi.alipaydev.com/gateway.do
-describe "AlipayDualFun", js: true do
-  let!(:product) { create(:product, :name => 'iPad') }
-
+#
+describe "Alipay" do
+  let!(:product) { create(:product) }
   before do
     @gateway = Spree::Gateway::AlipayDualfun.create!({
 #      preferred_email: 'sandbox_areq22@aliyun.com',
@@ -15,18 +15,21 @@ describe "AlipayDualFun", js: true do
       active: true,
 # environment: Rails.env
     })
-     create(:shipping_method)
+    create(:shipping_method)
   end
 
-  def fill_in_address(kind = "bill")
-    fill_in "First Name",              with: "John 99"
-    fill_in "Last Name",               with: "Doe"
-    fill_in "Street Address",          with: "100 first lane"
-    fill_in "Street Address (cont'd)", with: "#101"
-    fill_in "City",                    with: "Bethesda"
-    fill_in "Zip",                     with: "20170"
-    targetted_select2 "Alabama",       from: "#s2id_order_#{kind}_address_attributes_state_id"
-    fill_in "Phone",                   with: "123-456-7890"
+  def fill_in_billing
+    within("#billing") do
+      fill_in "First Name", :with => "Test"
+      fill_in "Last Name", :with => "User"
+      fill_in "Street Address", :with => "1 User Lane"
+      # City, State and ZIP must all match for PayPal to be happy
+      fill_in "City", :with => "Adamsville"
+      select "United States of America", :from => "order_bill_address_attributes_country_id"
+      select "Alabama", :from => "order_bill_address_attributes_state_id"
+      fill_in "Zip", :with => "35005"
+      fill_in "Phone", :with => "555-AME-RICA"
+    end
   end
 
   def switch_to_paypal_login
@@ -36,23 +39,26 @@ describe "AlipayDualFun", js: true do
       find("#loadLogin").click
     end
   end
- 
+  
   def add_to_cart(product)
+    visit spree.root_path
     click_link product.name
     click_button 'Add To Cart'
   end
 
-  it "pays for an order successfully" do
-    visit spree.root_path
-    expect(page).to have_content product.name
-    add_to_cart product
+  it "pays for an order successfully", js: true do
+    product = create(:product, name: "Ipad") 
+    visit spree.product_path(product)
+    click_button 'Add To Cart'
     click_button 'Checkout'
     within("#guest_checkout") do
       fill_in "Email", :with => "test@example.com"
       click_button 'Continue'
     end
-    fill_in_address
+
+    fill_in_billing
     click_button "Save and Continue"
+
     # Delivery step doesn't require any action
     click_button "Save and Continue"
     find("#paypal_button").click
