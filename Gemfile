@@ -1,7 +1,7 @@
 #source 'http://rubygems.org'
 source 'http://ruby.taobao.org/'
 
-
+gemspec
 
 gem 'ruby-hmac' #http://ryanbigg.com/2009/07/no-such-file-to-load-hmac-sha1/
 
@@ -16,4 +16,3 @@ end
 gem 'alipay' # better payment_method class
 gem 'offsite_payments'
 gem 'activemerchant_patch_for_china', github:'RuanShan/activemerchant_patch_for_china', branch:'for_offsite_payments'
-gemspec
