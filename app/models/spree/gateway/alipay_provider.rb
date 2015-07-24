@@ -1,3 +1,5 @@
+require 'alipay'
+
 module Spree
   class Gateway::AlipayProvider
     attr_accessor :service
