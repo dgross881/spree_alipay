@@ -25,7 +25,7 @@ module Spree
       #service partner _input_charset out_trade_no subject payment_type logistics_type logistics_fee logistics_payment seller_email price quantity
       options = { :_input_charset => "utf-8", 
                   :out_trade_no => order.number,
-                  :price => order.item_total, 
+                  :price => order.total, 
                   :quantity => 1,
                   :logistics_type=> 'EXPRESS',
                   :logistics_fee => order.shipments.to_a.sum(&:cost), 
