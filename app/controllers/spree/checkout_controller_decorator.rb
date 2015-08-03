@@ -23,11 +23,12 @@ module Spree
     def aplipay_full_service_url( order, alipay)
       
       #service partner _input_charset out_trade_no subject payment_type logistics_type logistics_fee logistics_payment seller_email price quantity
+
       options = { :_input_charset => "utf-8", 
                   :out_trade_no => order.number,
                   :price => order.total - order.shipment_total, 
                   :quantity => 1,
-                  :logistics_type=> 'EXPRESS',
+                  :logistics_type=> 'EXPRESS', #EXPRESS, POST, EMS
                   :logistics_fee => order.shipments.to_a.sum(&:cost), 
                   :logistics_payment=>'BUYER_PAY',
                   :seller_id => alipay.preferred_partner,
@@ -45,7 +46,6 @@ module Spree
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
         payment_method = get_payment_method(  )
         if payment_method.kind_of?(@alipay_base_class)
-          
           redirect_to aplipay_full_service_url(@order, payment_method)
         end
       else
