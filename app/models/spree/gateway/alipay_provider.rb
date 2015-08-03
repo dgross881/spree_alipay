@@ -23,8 +23,8 @@ module Spree
     
     def send_goods_confirm( alipay_transaction )
       options = {  :trade_no  => alipay_transaction.trade_no,
-        :logistics_name => 'dalianshops.com',
-        :transport_type => 'EXPRESS'
+        :logistics_name => 'SF_EXPRESS',
+        :logistics_type => 'EXPRESS'
       }
       if trade_create_by_buyer?         
         alipay_return = ::Alipay::Service.send_goods_confirm_by_platform(options)

@@ -7,7 +7,7 @@ module Spree
       # get order_no from query string -> get payment -> initialize Alipay -> verify ailpay callback
       order = retrieve_order params["out_trade_no"]      
       alipay_payment = get_alipay_payment( order )     
-       
+       binding.pry
       if alipay_payment.payment_method.provider.verify?( request.query_parameters )
         # 担保交易的交易状态变更顺序依次是:
         #  WAIT_BUYER_PAY→WAIT_SELLER_SEND_GOODS→WAIT_BUYER_CONFIRM_GOODS→TRADE_FINISHED。
@@ -32,7 +32,8 @@ module Spree
 
     def alipay_notify
       order = retrieve_order params["out_trade_no"]      
-      alipay_payment = get_alipay_payment( order )     
+      alipay_payment = get_alipay_payment( order )  
+      binding.pry   
       if alipay_payment.payment_method.provider.verify?( request.request_parameters )
         complete_order( order )
         render text: "success"
@@ -54,6 +55,7 @@ module Spree
     end
     
     def complete_order( order )
+      binding.pry
       unless order.complete?
         alipay_payment = order.unprocessed_payments.last
         # payment.state always :complete for both service, payment.source store more detail
