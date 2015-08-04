@@ -4,7 +4,6 @@ Spree::InventoryUnit.class_eval do
     after_transition to: :shipped, do: :send_goods_confirm_for_alipay
   end 
    
-
    private 
    # Changes Alipay's order state from 等待付款 "waiting for shipments" to 等待确认收货 "wait for confirmation of receipt"
    def send_goods_confirm_for_alipay

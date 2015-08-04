@@ -14,6 +14,7 @@ module Spree
               :total_fee=>params['total_fee'],
               :refund_status => params['refund_status'],
               :payment_type => params['payment_type'])
+              :batch_no => params['batch_no']
     end
 
     def send_goods_confirm(  )

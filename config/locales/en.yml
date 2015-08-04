@@ -1,5 +1,23 @@
 # Sample localization file for English. Add more files in this directory for other locales.
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
-
+---
 en:
-  hello: "Hello world"
+  spree:
+    alipay:
+      already_refunded: "This payment has been refunded and no further action can be taken on it."
+      no_payment_via_admin_backend: "You cannot charge Alipay accounts through the admin backend at this time."
+      transaction: "Alipayy Transaction"
+      payer_id: "Payer ID"
+      transaction_id: "Transaction ID"
+      token: "Token"
+      refund: "Refund"
+      refund_amount: "Amount"
+      original_amount: "Original amount: %{amount}"
+      refund_successful: "Alipay refund successful"
+      refund_unsuccessful: "Alipay refund unsuccessful"
+      actions:
+        refund: "Refund"
+      flash:
+        cancel: "Don't want to use Alipay? No problems."
+        connection_failed: "Could not connect to Alipay."
+        generic_error: "Alipay failed. %{reasons}"

@@ -14,13 +14,11 @@ Spree::Core::Engine.add_routes do
     resources :orders, :only => [] do
       resources :payments, :only => [] do
         member do
-          get 'paypal_refund'
-          post 'paypal_refund'
+          get 'alipay_refund'
+          post 'alipay_refund'
         end
       end
     end
   end
-
-
 end
 

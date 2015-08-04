@@ -1,0 +1,16 @@
+<% if payment.source.state != 'refunded' %>
+  <%= button_link_to Spree.t('actions.refund', scope: :alipay), spree.alipay_refund_admin_order_payment_path(@order, payment), icon: 'money' %>
+<% else %>
+  <div class="alpha six columns">
+    <dl>
+      <dt><%= Spree.t(:state, :scope => :alipay) %>:</dt>
+      <dd><%= payment.source.trade_status.titleize %></dd>
+      <dt><%= Spree.t(:refunded_status, :scope => :alipay) %>:</dt>
+      <dd><%= pretty_time(payment.source.buyer_email) %></dd>
+      <dt><%= Spree.t(:trade_no, :scope => :alipay) %>:</dt>
+      <dd><%= payment.source.trade_no %></dd>
+      <dt><%= Spree.t(:batch_no, :scope => :alipay) %>:</dt>
+      <dd><%= payment.source.batch_no %></dd>
+    </dl>
+  </div>
+<% end %>
