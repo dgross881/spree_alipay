@@ -4,10 +4,12 @@ require 'spec_helper'
 #sandbox_areq22@aliyun.com
 #http://openapi.alipaydev.com/gateway.do
 describe "Alipay", :js => true, :type => :feature do
+  let!(:country) { create(:country, :states_required => true) }
+  let!(:state) { create(:state, :country => country) }
   let!(:product) { FactoryGirl.create(:product, :name => 'iPad') }
 
   before do
-    @gateway = Spree::Gateway::AlipayDualfun.create!({
+    @gateway = Spree::Gateway::AlipayEscrow.create!({
       preferred_partner: '2088002627298374',
       preferred_sign: 'f4y25qc539qakg734vn2jpqq6gmybxoz',
       name: "Alipay",
@@ -16,51 +18,50 @@ describe "Alipay", :js => true, :type => :feature do
     FactoryGirl.create(:shipping_method)
   end
 
+  let!(:zone) { create(:zone) }
 
-  it "pays for an order successfully" do
-    visit spree.root_path
-    click_link product.name
-    click_button 'Add To Cart'
-    click_button 'Checkout'
-    within("#guest_checkout") do
-      fill_in "Email", :with => "test@example.com"
-      click_button 'Continue'
-    end
-    fill_in_billing
-    click_button "Save and Continue"
-    # Delivery step doesn't require any action
-    click_button "Save and Continue"
-    find("#paypal_button").click
-    switch_to_paypal_login
-    fill_in "login_email", :with => "pp@spreecommerce.com"
-    fill_in "login_password", :with => "thequickbrownfox"
-    click_button "Log In"
-    find("#continue_abovefold").click   # Because there's TWO continue buttons.
-    page.should have_content("Your order has been processed successfully")
-
-    Spree::Payment.last.source.transaction_id.should_not be_blank
+ def fill_in_billing
+    fill_in :order_bill_address_attributes_firstname, with: "Test"
+    fill_in :order_bill_address_attributes_lastname, with: "User"
+    fill_in :order_bill_address_attributes_address1, with: "1 User Lane"
+    # City, State and ZIP must all match for PayPal to be happy
+    fill_in :order_bill_address_attributes_city, with: "Adamsville"
+    select "United States of America", from: :order_bill_address_attributes_country_id
+    select "Alabama", from: :order_bill_address_attributes_state_id
+    fill_in :order_bill_address_attributes_zipcode, with: "35005"
+    fill_in :order_bill_address_attributes_phone, with: "555-123-4567"
   end
 
-  def fill_in_billing
-    within("#billing") do
-      fill_in "First Name", :with => "Test"
-      fill_in "Last Name", :with => "User"
-      fill_in "Street Address", :with => "1 User Lane"
-      # City, State and ZIP must all match for PayPal to be happy
-      fill_in "City", :with => "Adamsville"
-      select "United States of America", :from => "order_bill_address_attributes_country_id"
-      select "Alabama", :from => "order_bill_address_attributes_state_id"
-      fill_in "Zip", :with => "35005"
-      fill_in "Phone", :with => "555-AME-RICA"
-    end
-  end
+    stub_authorization!
 
-  def switch_to_paypal_login
-    # If you go through a payment once in the sandbox, it remembers your preferred setting.
-    # It defaults to the *wrong* setting for the first time, so we need to have this method.
-    unless page.has_selector?("#login_email")
-      find("#loadLogin").click
-    end
-  end
+    context "refunding payments" do
 
-end
+      before do
+        visit spree.root_path
+        click_link 'iPad'
+        click_button 'Add To Cart'
+        click_button 'Checkout'
+        within("#guest_checkout") do
+          fill_in "Email", with: "test@example.com"
+          click_button 'Continue'
+        end
+        fill_in_billing
+        click_button "Save and Continue"
+        # Delivery step doesn't require any action
+        click_button "Save and Continue"
+      end
+
+
+      it "It shows Alipay Escrow as a source of payment" do
+        within '#payment-method-fields' do
+          expect(page).to have_content "Alipay"
+        end
+      end
+
+      it "Choose alipay for paymnet and expect the correct success message" do 
+         choose "Alipay"
+         click_button "Save and Continue"
+         expect(page).to have_content "Success" 
+      end
+    end 
+  end 

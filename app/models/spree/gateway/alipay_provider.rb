@@ -37,42 +37,6 @@ module Spree
       end      
     end
     
-    def refund(payment, amount)
-      refund_type = payment.amount == amount.to_f ? "Full" : "Partial"
-      batch_no = Alipay::Utils.generate_batch_no
-
-      refund_transaction = Alipay::Service.refund_fastpay_by_platform_pwd_url(
-        batch_no: batch_no,
-        RefundType: refund_type,
-        data:  [{
-          trade_no: payment.trade_no,
-          amount: amount,
-          reason: "REFUND_REASON",
-        }],
-          :notify_url: admin_order_payment_path(payment.order, payment) 
-      )
-      refund_transaction_response = provider.refund_transaction(refund_transaction)
-
-      if refund_transaction_response.success?
-        payment.source.update_attributes({
-          :refunded_at => Time.now,
-          :batch_no => refund_transaction_response.batch_no,
-          :state => "refunded",
-          :refund_status => refund_type
-        })
-
-        payment.class.create!(
-          :trade_no => payment.order,
-          :source => payment,
-          :payment_type => payment.payment_method,
-          :total_fee => amount.to_f.abs * -1,
-          #:response_code => refund_transaction_response.batch_no,
-          :state => 'completed'
-        )
-      end
-      refund_transaction_response
-    end
-    
     # 标准双接口
     def trade_create_by_buyer?
       self.service == 'trade_create_by_buyer'

@@ -3,6 +3,8 @@ require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/order_walkthrough'
+require 'fakeweb'
 
 RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, type: :controller

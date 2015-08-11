@@ -1,0 +1,44 @@
+<fieldset data-hook="spree">
+  <legend align="center"><%= Spree.t(:transaction, :scope => :spree) %></legend>
+
+  <div class="row">
+    <div class="alpha six columns">
+      <dl>
+        <dt><%= Spree.t(:trade_no, :scope => :spree) %>:</dt>
+        <dd><%= payment.source.tade_no %></dd>
+
+        <dt><%= Spree.t(:buyer_email, :scope => :spree) %>:</dt>
+        <dd><%= payment.source.buyer_email %></dd>
+
+        <dt><%= Spree.t(:trade_status, :scope => :spree) %>:</dt>
+        <dd><%= payment.source.trade_status %></dd>
+
+        <dt><%= Spree.t(:total_fee) %>:</dt>
+        <dd><%= payment.source.trade_status %></dd>
+        
+        <dt><%= Spree.t(:payment_type) %>:</dt>
+        <dd><%= payment.source.payment_type %></dd>
+        
+        <dt><%= Spree.t(:batch_no) %>:</dt>
+        <dd><%= payment.source.batch_no %></dd>
+      </dl>
+    </div>
+
+    <% if payment.source.state != 'refunded' %>
+      <%= button_link_to Spree.t('actions.refund', scope: :spree), spree.spree_refund_admin_order_payment_path(@order, payment), icon: 'money' %>
+    <% else %>
+      <div class="alpha six columns">
+        <dl>
+          <dt><%= Spree.t(:refund_status, :scope => :spree) %>:</dt>
+          <dd><%= payment.source.state.titleize %></dd>
+
+          <dt><%= Spree.t(:buyer_email, :scope => :spree) %>:</dt>
+          <dd><%= pretty_time(payment.source.refunded_at) %></dd>
+
+          <dt><%= Spree.t(:batch_no, :scope => :spree) %>:</dt>
+          <dd><%= payment.source.refund_transaction_id %></dd>
+        </dl>
+      </div>
+    <% end %>
+  </div>
+</fieldset>

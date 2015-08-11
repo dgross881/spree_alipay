@@ -13,8 +13,9 @@ module Spree
               :trade_status => params['trade_status'], #WAIT_SELLER_SEND_GOODS
               :total_fee=>params['total_fee'],
               :refund_status => params['refund_status'],
-              :payment_type => params['payment_type'])
+              :payment_type => params['payment_type'],
               :batch_no => params['batch_no']
+            )
     end
 
     def send_goods_confirm(  )
