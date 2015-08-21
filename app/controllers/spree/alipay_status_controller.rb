@@ -7,7 +7,7 @@ module Spree
     def alipay_done
       # alipay acount could vary in each store. 
       # get order_no from query string -> get payment -> initialize Alipay -> verify ailpay callback
-      order = retrieve_order params["out_trade_no"]      
+      order = retrieve_order params["out_trade_no"] || raise(ActiveRecord::RecordNotFound) 
       alipay_payment = get_alipay_payment( order )     
        
       if alipay_payment.payment_method.provider.verify?( request.query_parameters )
@@ -15,9 +15,9 @@ module Spree
         #  WAIT_BUYER_PAY→WAIT_SELLER_SEND_GOODS→WAIT_BUYER_CONFIRM_GOODS→TRADE_FINISHED。
         # 即时到账的交易状态变更顺序依次是:
         #  WAIT_BUYER_PAY→TRADE_FINISHED。
-        complete_order( order )
-        if order.complete?
+        if request[:trade_status] == "WAIT_SELLER_SEND_GOODS"
           #copy from spree/frontend/checkout_controller
+          complete_order( order )
           session[:order_id] = nil
           flash.notice = Spree.t(:order_processed_successfully)
           flash['order_completed'] = true
