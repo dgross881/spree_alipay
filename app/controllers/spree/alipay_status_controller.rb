@@ -35,12 +35,13 @@ module Spree
       order = retrieve_order params["out_trade_no"]      
       alipay_payment = get_alipay_payment( order )     
       if alipay_payment.payment_method.provider.verify?( request.request_parameters )
-        complete_order( order )
-        render text: "success"
+        if request[:trade_status] == "WAIT_SELLER_SEND_GOODS"
+          complete_order( order )
+          render text: "success"
+        end 
       else
         render text: "fail"         
       end
-           
     end
 
     private
