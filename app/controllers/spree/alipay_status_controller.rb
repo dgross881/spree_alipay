@@ -18,18 +18,17 @@ module Spree
         if request[:trade_status] == "WAIT_SELLER_SEND_GOODS"
           #copy from spree/frontend/checkout_controller
           complete_order( order )
-          session[:order_id] = nil
-          flash.notice = Spree.t(:order_processed_successfully)
-          flash['order_completed'] = true
-          redirect_to spree.order_path( order )
-        else
-          #Strange
+          if order.complete? 
+            session[:order_id] = nil
+            flash.notice = Spree.t(:order_processed_successfully)
+            flash['order_completed'] = true
+            redirect_to spree.order_path( order ) 
+         else
           redirect_to checkout_state_path(order.state)
         end
       else
         redirect_to checkout_state_path(order.state)          
       end
-      
     end
 
     def alipay_notify
