@@ -36,7 +36,7 @@ module Spree
                   :return_url => url_for(:only_path => false, :controller=>'alipay_status', :action => 'alipay_done'),
                   :body => order.products.collect(&:name).to_s,  #String(400)                  
                   :payment_type => 1,
-                  :subject =>"订单编号:#{order.number}"                  
+                  :subject =>"订单编号:#{order.number} + #{Time.now.to_i.to_s}"                  
          }
       alipay.provider.url( options )
     end
