@@ -7,23 +7,19 @@ module Spree
     def alipay_done
       # alipay acount could vary in each store. 
       # get order_no from query string -> get payment -> initialize Alipay -> verify ailpay callback
-      order = retrieve_order params["out_trade_no"] || raise(ActiveRecord::RecordNotFound) 
+      order = retrieve_order params["out_trade_no"]      
       alipay_payment = get_alipay_payment( order )     
        
       if alipay_payment.payment_method.provider.verify?( request.query_parameters )
-        # 担保交易的交易状态变更顺序依次是:
-        #  WAIT_BUYER_PAY→WAIT_SELLER_SEND_GOODS→WAIT_BUYER_CONFIRM_GOODS→TRADE_FINISHED。
-        # 即时到账的交易状态变更顺序依次是:
-        #  WAIT_BUYER_PAY→TRADE_FINISHED。
-        if request[:trade_status] == "WAIT_SELLER_SEND_GOODS"
+        complete_order( order )
+        if order.complete?
           #copy from spree/frontend/checkout_controller
-          complete_order( order )
-          if order.complete? 
-            session[:order_id] = nil
-            flash.notice = Spree.t(:order_processed_successfully)
-            flash['order_completed'] = true
-            redirect_to spree.order_path( order ) 
-         else
+          session[:order_id] = nil
+          flash.notice = Spree.t(:order_processed_successfully)
+          flash['order_completed'] = true
+          redirect_to spree.order_path( order )
+        else
+          #Strange
           redirect_to checkout_state_path(order.state)
         end
       else
@@ -38,6 +34,8 @@ module Spree
         if request[:trade_status] == "WAIT_SELLER_SEND_GOODS"
           complete_order( order )
           render text: "success"
+        else 
+          render text: "Buyer needs to pay"
         end 
       else
         render text: "fail"         
