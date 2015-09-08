@@ -45,8 +45,11 @@ module Spree
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
         payment_method = get_payment_method(  )
         if payment_method.kind_of?(@alipay_base_class)
-          
-          redirect_to aplipay_full_service_url(@order, payment_method)
+          if request.xhr? 
+            render :js => "window.location = '#{aplipay_full_service_url(@order, payment_method)}'"
+          else 
+            redirect_to aplipay_full_service_url(@order, payment_method)
+          end 
         end
       else
         render( :edit ) and return        
