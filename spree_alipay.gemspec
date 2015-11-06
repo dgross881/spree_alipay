@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', '~> 3.0.0'
-  s.add_dependency 'alipay', '~> 0.7.0'
+  s.add_dependency 'alipay', '~> 0.10.0'
   s.add_dependency 'offsite_payments'
   s.add_dependency 'ruby-hmac'
 
