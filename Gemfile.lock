@@ -82,11 +82,11 @@ PATH
   remote: .
   specs:
     spree_alipay (3.0.0)
-      alipay (~> 0.7.0)
+      alipay (~> 0.10.0)
       spree_core (~> 3.0.0)
 
 GEM
-  remote: http://ruby.taobao.org/
+  remote: http://rubygems.org/
   specs:
     actionmailer (4.2.1)
       actionpack (= 4.2.1)
@@ -134,7 +134,7 @@ GEM
     acts_as_list (0.7.2)
       activerecord (>= 3.0)
     addressable (2.3.8)
-    alipay (0.7.1)
+    alipay (0.10.0)
     arel (6.0.0)
     autoprefixer-rails (5.1.11)
       execjs
@@ -399,7 +399,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemerchant_patch_for_china!
-  alipay
+  alipay (~> 0.10.0)
   capybara (~> 2.4)
   coffee-rails
   database_cleaner
@@ -419,4 +419,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.10.5
+   1.10.6
