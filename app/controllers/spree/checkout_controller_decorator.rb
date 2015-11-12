@@ -34,7 +34,7 @@ module Spree
                   :seller_id => alipay.preferred_partner,
                   :notify_url => url_for(:only_path => false, :controller=>'alipay_status', :action => 'alipay_notify'),
                   :return_url => url_for(:only_path => false, :controller=>'alipay_status', :action => 'alipay_done'),
-                  :body => order.products.collect(&:name).to_s,  #String(400)                  
+                  :body => order.alipay_body,  #String(400)                  
                   :payment_type => 1,
                   :subject => order.number                   
          }

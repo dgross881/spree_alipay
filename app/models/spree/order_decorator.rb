@@ -20,5 +20,9 @@ Spree::Order.class_eval do
       end
     end
   end
+
+  def alipay_body
+     products.collect(&:name).to_s.length >= 400 ? number : products.collect(&:name).to_s
+  end 
   
 end
