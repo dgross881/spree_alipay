@@ -10,6 +10,6 @@ group :test,:development do
   gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-0-stable'
 end
 
-  gem 'activemerchant_patch_for_china', github:'RuanShan/activemerchant_patch_for_china', branch:'for_offsite_payments'
+#  gem 'activemerchant_patch_for_china', github:'RuanShan/activemerchant_patch_for_china', branch:'for_offsite_payments'
 
 gemspec
