@@ -17,13 +17,13 @@ module Spree
           session[:order_id] = nil
           flash.notice = Spree.t(:order_processed_successfully)
           flash['order_completed'] = true
-          redirect_to spree.order_path( order )
+          redirect_to spree.order_path( order, utm_nooverride: 1 )
         else
           #Strange
-          redirect_to checkout_state_path(order.state)
+          redirect_to checkout_state_path(order.state, utm_nooverride: 1)
         end
       else
-        redirect_to checkout_state_path(order.state)          
+        redirect_to checkout_state_path(order.state, utm_nooverride: 1)          
       end
     end
 
