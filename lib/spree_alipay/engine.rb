@@ -16,12 +16,12 @@ module SpreeAlipay
     end
 
     config.to_prepare &method(:activate).to_proc
-    
+
     config.after_initialize do |app|
-      require 'offsite_payments/action_view_helper'
-      ActionView::Base.send(:include, OffsitePayments::ActionViewHelper)       
       app.config.spree.payment_methods += [
-        Spree::Gateway::AlipayDualfun, Spree::Gateway::AlipayEscrow
+        Spree::Gateway::AlipayDualfun, Spree::Gateway::AlipayEscrow,
+        Spree::Gateway::AlipayDirect, Spree::Gateway::AlipayDirectBankPay,
+        Spree::Gateway::ForexTrade
       ]
     end
   end
