@@ -21,7 +21,7 @@ module SpreeAlipay
       app.config.spree.payment_methods += [
         Spree::Gateway::AlipayDualfun, Spree::Gateway::AlipayEscrow,
         Spree::Gateway::AlipayDirect, Spree::Gateway::AlipayDirectBankPay,
-        Spree::Gateway::ForexTrade
+        Spree::Gateway::AlipayForexTrade
       ]
     end
   end

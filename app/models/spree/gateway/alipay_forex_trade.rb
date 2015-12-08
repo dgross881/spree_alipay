@@ -1,5 +1,5 @@
 module Spree
-  class Gateway::ForexTrade < Gateway::AlipayDualfun
+  class Gateway::AlipayForexTrade < Gateway::AlipayDualfun
 
     def service
       ServiceEnum.create_forex_trade

@@ -55,7 +55,7 @@ module Spree
       when Gateway::AlipayBase::ServiceEnum.trade_create_by_buyer
         options.merge!( pc_escrow_params )
         ::Alipay::Service.trade_create_by_buyer_url( options )
-      when Gateway::AlipayBase::ServiceEnum.create_forext_trade( options )
+      when Gateway::AlipayBase::ServiceEnum.create_forex_trade
         options.merge!( forex_params )
         ::Alipay::Service.create_forex_trade_url( options )
       end

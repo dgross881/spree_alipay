@@ -29,7 +29,7 @@ module Spree
                   :payment_type => 1,
                   :subject => order.number 
          }
-      alipay.provider.url( options )
+      alipay.provider.url(order, options )
     end
 
     # handle all supported billing_integration
