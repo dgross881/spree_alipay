@@ -31,13 +31,18 @@ module Spree
         total_fee:  order.total
         }
 
+
       forex_params = { 
         :price => order.total - order.shipment_total, 
+        :total_fee => (order.total if order.currency != "CNY"),
+        :rmb_fee => (order.total if order.currency == "CNY"), 
         :quantity => 1,
+        :currency => (order.currency != "CNY" ? order.currency : "USD"),
         :logistics_type=> 'EXPRESS', #EXPRESS, POST, EMS
         :logistics_fee => order.shipments.to_a.sum(&:cost), 
         :logistics_payment=>'BUYER_PAY',
-      }
+      }.reject { |k, v| v.nil? }
+
 
 
       case service
