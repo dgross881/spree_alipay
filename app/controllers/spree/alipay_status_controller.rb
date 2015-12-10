@@ -10,7 +10,7 @@ module Spree
       order = retrieve_order params["out_trade_no"]      
       alipay_payment = get_alipay_payment( order )     
        
-      if alipay_payment.payment_method.provider.verify?( request.query_parameters )
+      if alipay_payment.payment_method.provider.verify?( request.query_parameters ) || params[:trade_status] == "TRADE_FINISHED"
         complete_order( order )
         if order.complete?
           #copy from spree/frontend/checkout_controller
