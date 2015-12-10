@@ -22,7 +22,6 @@ module Spree
       #service partner _input_charset out_trade_no subject payment_type logistics_type logistics_fee logistics_payment seller_email price quantity
          options = { :_input_charset => "utf-8", 
                   :out_trade_no => order.number,
-                  :seller_id => alipay.preferred_partner,
                   :notify_url => url_for(:only_path => false, :controller=>'alipay_status', :action => 'alipay_notify'),
                   :return_url => url_for(:only_path => false, :controller=>'alipay_status', :action => 'alipay_done'),
                   :body => order.alipay_body,  #String(400)                  
