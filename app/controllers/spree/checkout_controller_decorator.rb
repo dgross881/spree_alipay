@@ -10,7 +10,7 @@ module Spree
       #all_filters = self.class._process_action_callbacks
       #all_filters = all_filters.select{|f| f.kind == :before}
       #logger.debug "all before filers:"+all_filters.map(&:filter).inspect
-      return unless @order.next_step_complete?
+      return unless @order.state.include?("payment")
       #in confirm step, only param is  {"state"=>"confirm"}
       payment_method = get_payment_method_by_params(  )
       if payment_method.kind_of?( @alipay_base_class )
