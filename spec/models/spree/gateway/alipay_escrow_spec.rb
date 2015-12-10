@@ -44,7 +44,6 @@ describe Spree::Gateway::AlipayEscrow do
   context 'set_partner_trade' do
     it 'generate the partner trade button' do
       options_method 
-      binding.pry
       expect(@gateway.provider.url(@options)).to include "https://mapi.alipay.com/gateway.do?service=create_partner_trade_by_buyer&_input_charset=utf-8&partner=TESTPID&seller_id=TESTPID"
     end
   end

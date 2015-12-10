@@ -11,7 +11,7 @@ module Spree
       alipay_payment = get_alipay_payment( order )     
        
       if alipay_payment.payment_method.provider.verify?( request.query_parameters ) || params[:trade_status] == "TRADE_FINISHED"
-        complete_order( order )
+        complete_order( order, request_parameters )
         if order.complete?
           #copy from spree/frontend/checkout_controller
           session[:order_id] = nil
