@@ -11,7 +11,7 @@ module Spree
       alipay_payment = get_alipay_payment( order )     
        
       if alipay_payment.payment_method.provider.verify?( request.query_parameters ) || params[:trade_status] == "TRADE_FINISHED"
-        complete_order( order, request.request_parameters )
+        complete_order( order )
         if order.complete?
           #copy from spree/frontend/checkout_controller
           session[:order_id] = nil
@@ -31,7 +31,7 @@ module Spree
       order = retrieve_order params["out_trade_no"]
       alipay_payment = get_alipay_payment( order )
       if alipay_payment.payment_method.provider.verify?( request.request_parameters )
-        complete_order( order, request.request_parameters )
+        complete_order( order )
         render text: "success"
       else
         render text: "fail"
@@ -49,10 +49,12 @@ module Spree
       order.payments.last
     end
 
-    def complete_order( order, alipay_parameters )
+    def complete_order( order )
       unless order.complete?
         alipay_payment = get_alipay_payment( order )
-        alipay_payment.update_attributes response_code, "#{alipay_parameters['trade_no']},#{alipay_parameters['trade_status']}"
+        alipay_transaction = AlipayTransaction.create_from_postback params     
+        alipay_payment.source = alipay_transaction
+        alipay_payment.save!
         # it require pending_payments to process_payments!
         order.next
       end
