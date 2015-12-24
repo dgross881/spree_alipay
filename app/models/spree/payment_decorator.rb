@@ -18,13 +18,13 @@ Spree::Payment.class_eval do
             yield
           else
             invalidate!
-            raise Core::GatewayError.new(Spree.t(:payment_method_not_supported))
+            raise Spree::Core::GatewayError.new(Spree.t(:payment_method_not_supported))
           end
         end
       elsif method_alipay? # continue to complete alipay payment.
         yield
       else
-        raise Core::GatewayError.new(Spree.t(:payment_processing_failed))
+        raise Spree::Core::GatewayError.new(Spree.t(:payment_processing_failed))
       end
     end
   end
