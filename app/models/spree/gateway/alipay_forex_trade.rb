@@ -6,7 +6,7 @@ module Spree
     end
 
     def auto_capture?
-      return false
+      true 
     end
   end
 end
