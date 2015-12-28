@@ -8,30 +8,30 @@ module Spree
       # alipay acount could vary in each store. 
       # get order_no from query string -> get payment -> initialize Alipay -> verify ailpay callback
       order = retrieve_order params["out_trade_no"]      
-      alipay_payment = get_alipay_payment( order )     
-       
-      if alipay_payment.payment_method.provider.verify?( request.query_parameters ) || params[:trade_status] == "TRADE_FINISHED"
-        complete_order( order )
-        if order.complete?
-          #copy from spree/frontend/checkout_controller
-          session[:order_id] = nil
-          flash.notice = Spree.t(:order_processed_successfully)
-          flash['order_completed'] = true
-          redirect_to spree.order_path( order, utm_nooverride: 1 )
-        else
-          #Strange
-          redirect_to checkout_state_path(order.state, utm_nooverride: 1)
-        end
+      alipay_payment = get_alipay_payment( order )   
+      status = params[:trade_status] 
+      handle_status(status, order)
+
+      if order.complete?
+        #copy from spree/frontend/checkout_controller
+        session[:order_id] = nil
+        flash.notice = Spree.t(:order_processed_successfully)
+        flash['order_completed'] = true
+        redirect_to spree.order_path( order, utm_nooverride: 1 )
       else
-        redirect_to checkout_state_path(order.state, utm_nooverride: 1)          
+        #Strange
+        flash[:error] = "Something seemed to go wrong #{status}"
+        redirect_to checkout_state_path(order.state, utm_nooverride: 1)
       end
     end
 
     def alipay_notify
       order = retrieve_order params["out_trade_no"]
       alipay_payment = get_alipay_payment( order )
-      if alipay_payment.payment_method.provider.verify?( request.request_parameters )
-        complete_order( order )
+      notify_params = params.except(*request.path_parameters.keys)  
+      if alipay_payment.payment_method.provider.verify?( notify_params )
+        status = params[:trade_status]
+        handle_status(status, order)
         render text: "success"
       else
         render text: "fail"
@@ -39,6 +39,24 @@ module Spree
     end
 
     private
+
+
+    def handle_status(status, order)
+      case status
+      when 'WAIT_BUYER_PAY'
+        logger.info "Waiting for the payment"
+      when 'WAIT_SELLER_SEND_GOODS'
+        logger.info "Waiting for the seller to send the goods"
+      when 'TRADE_FINISHED', "TRADE_SUCCESS"
+       complete_order( order )
+       logger.info "Trade Success"
+      when 'TRADE_CLOSED'
+        logger.info "Trade closed"
+      else
+        logger.info "Received status signal: #{status}"
+      end
+    end
+
 
     def retrieve_order(order_number)
       @order = Spree::Order.find_by_number!(order_number)
