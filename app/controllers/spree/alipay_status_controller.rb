@@ -48,7 +48,7 @@ module Spree
       when 'WAIT_SELLER_SEND_GOODS'
         logger.info "Waiting for the seller to send the goods"
       when 'TRADE_FINISHED', "TRADE_SUCCESS"
-       complete_order( order )
+       complete_order( order, request.request_parameters )
        logger.info "Trade Success"
       when 'TRADE_CLOSED'
         logger.info "Trade closed"
@@ -67,14 +67,13 @@ module Spree
       order.payments.last
     end
 
-    def complete_order( order )
+    def complete_order( order, alipay_parameters )
       unless order.complete?
         alipay_payment = get_alipay_payment( order )
-        alipay_transaction = AlipayTransaction.create_from_postback params     
-        alipay_payment.source = alipay_transaction
-        alipay_payment.save!
+        alipay_payment.update_attribute :response_code, "#{alipay_parameters['trade_no']},#{alipay_parameters['trade_status']}"
         # it require pending_payments to process_payments!
-        order.next
+        alipay_payment.complete! unless alipay_payment.completed?
+        order.next 
       end
     end
   end
