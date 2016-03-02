@@ -17,6 +17,7 @@ module Spree
         session[:order_id] = nil
         flash.notice = Spree.t(:order_processed_successfully)
         flash['order_completed'] = true
+        get_alipay_payment(order).complete!
         redirect_to spree.order_path( order, utm_nooverride: 1 )
       else
         #Strange
@@ -48,7 +49,7 @@ module Spree
       when 'WAIT_SELLER_SEND_GOODS'
         logger.info "Waiting for the seller to send the goods"
       when 'TRADE_FINISHED', "TRADE_SUCCESS"
-       complete_order( order, request.request_parameters )
+       complete_order(order, params.except(*request.path_parameters.keys))
        logger.info "Trade Success"
       when 'TRADE_CLOSED'
         logger.info "Trade closed"
@@ -70,9 +71,9 @@ module Spree
     def complete_order( order, alipay_parameters )
       unless order.complete?
         alipay_payment = get_alipay_payment( order )
-        alipay_payment.update_attribute :response_code, "#{alipay_parameters['trade_no']},#{alipay_parameters['trade_status']}"
+        alipay_payment.update_attribute :response_code, "#{alipay_parameters['trade_no']}, \n 
+                                                         #{alipay_parameters['trade_status']}"
         # it require pending_payments to process_payments!
-        alipay_payment.complete! unless alipay_payment.completed?
         order.next 
       end
     end

@@ -106,10 +106,7 @@ module Spree
     #   * options - gateway_options
     # * return - pingpp_response
     def purchase(money, credit_card, options = {})
-      # since pingpp is offsite payment, this method is placehodler only.
-      # in this way, we could go through spree payment process.
       return Gateway::AlipayResponse.new
     end
-
   end
 end
